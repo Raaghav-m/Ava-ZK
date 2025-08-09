@@ -1,0 +1,8 @@
+Deployment Log - Sat Aug  9 03:33:56 PM IST 2025
+Network: Avalanche Fuji Testnet
+RPC URL: https://api.avax-test.network/ext/bc/C/rpc
+===========================================
+Groth16Verifier: 0xC495a186c95763EA28bB8f71A6E8EDd779b67073
+TX: 0xfe15f4fd8ad9ef95736661c7e399c44a66a9f640336e4f2fba60d61cc290d92a
+ZKProofSender: 0xa68043d6Bc28fE8c92caF913be3ec4a788149200
+TX: 0x187be5549fad71a993fe01bfd4ed60d0ce04aa09db00fd29220d789bd2985780
