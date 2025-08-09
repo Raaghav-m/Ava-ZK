@@ -16,6 +16,7 @@ interface IGroth16Verifier {
 contract ZKProofReceiver is ITeleporterReceiver {
     ITeleporterMessenger public immutable teleporter;
     IGroth16Verifier public immutable verifier;
+    bool public isProofValid;
 
     // Struct to hold the latest proof data
     struct ProofData {
@@ -93,12 +94,13 @@ contract ZKProofReceiver is ITeleporterReceiver {
     uint[2] memory _pC,
     uint[1] memory _pubSignals
 ) public returns (bool) {
-    bool isValid = verifier.verifyProof(_pA, _pB, _pC, _pubSignals);
+    isProofValid = verifier.verifyProof(_pA, _pB, _pC, _pubSignals);
+    require(isProofValid, "NOT VERIFIED");
 
-    if (isValid) {
+    if (isProofValid) {
         emit ProofVerificationSuccess(_pubSignals[0]);
     }
-    return isValid;
+    return isProofValid;
 }
 
     function verifyStoredProof() external returns (bool) {
@@ -109,5 +111,20 @@ contract ZKProofReceiver is ITeleporterReceiver {
         uint[1] memory pubSignals = latestProof.pubSignals;
 
         return verifyProofDirectly(pA, pB, pC, pubSignals);
+    }
+
+    // Getter function for latestProof
+    function getLatestProof() external view returns (
+        uint[2] memory pA,
+        uint[2][2] memory pB,
+        uint[2] memory pC,
+        uint[1] memory pubSignals
+    ) {
+        return (
+            latestProof.pA,
+            latestProof.pB,
+            latestProof.pC,
+            latestProof.pubSignals
+        );
     }
 }
