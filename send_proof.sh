@@ -95,17 +95,7 @@ load_deployment_info() {
 
 # Try to load from deployment log first
 if load_deployment_info; then
-    # Get Chain 2 ID for destination and format as bytes32
-    if command -v cast &> /dev/null; then
-        CHAIN_ID_RAW=$(cast chain-id --rpc-url $CHAIN2_RPC_URL 2>/dev/null)
-        if [ $? -eq 0 ]; then
-            DESTINATION_CHAIN_ID=$(printf "0x%064x" $CHAIN_ID_RAW)
-            print_success "Detected destination chain ID: $CHAIN_ID_RAW (formatted: $DESTINATION_CHAIN_ID)"
-        else
-            print_warning "Could not detect chain ID, will prompt for it"
-            DESTINATION_CHAIN_ID=""
-        fi
-    fi
+    echo "Deployment information loaded successfully"
 else
     # Fallback to manual input or arguments
     SENDER_CONTRACT="$1"
@@ -124,9 +114,13 @@ else
         prompt_input "Enter destination blockchain ID (Chain 2)" "DESTINATION_CHAIN_ID"
     fi
     
-    # Prompt for RPC URLs
-    prompt_input "Enter Chain 1 RPC URL (sender chain)" "CHAIN1_RPC_URL" "https://api.avax-test.network/ext/bc/C/rpc"
+         # Prompt for RPC URLs
+     prompt_input "Enter Chain 1 RPC URL (sender chain)" "CHAIN1_RPC_URL" "https://api.avax-test.network/ext/bc/C/rpc"
 fi
+
+# Always prompt for destination chain ID
+prompt_input "Enter destination blockchain ID (Chain 2) as hex string" "DESTINATION_CHAIN_ID"
+print_success "Using destination chain ID: $DESTINATION_CHAIN_ID"
 
 echo ""
 print_step "Configuration"
