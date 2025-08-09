@@ -51,7 +51,7 @@ print_step "Starting Circom Workflow for $CIRCUIT_FILE"
 
 # Step 1: Compile the circuit
 print_step "1. Compiling Circuit"
-circom "$CIRCUIT_FILE" --r1cs --wasm --sym
+circom "$CIRCUIT_FILE" --r1cs --wasm --sym -l node_modules
 print_success "Circuit compiled successfully"
 
 # Step 2: Generate witness
@@ -88,21 +88,21 @@ print_step "3. Setting up Powers of Tau"
 ENTROPY=$(openssl rand -hex 32 || head -c 32 /dev/urandom | hexdump -v -e '/1 "%02x"')
 
 if [ ! -f "pot12_0000.ptau" ]; then
-    snarkjs powersoftau new bn128 12 pot12_0000.ptau -v
+    snarkjs powersoftau new bn128 12 pot12_0000.ptau -v > /dev/null 2>&1
     print_success "Powers of tau ceremony started"
 else
     print_success "pot12_0000.ptau already exists"
 fi
 
 if [ ! -f "pot12_0001.ptau" ]; then
-    snarkjs powersoftau contribute pot12_0000.ptau pot12_0001.ptau --name="First contribution" -v -e="$ENTROPY"
+    snarkjs powersoftau contribute pot12_0000.ptau pot12_0001.ptau --name="First contribution" -v -e="$ENTROPY" > /dev/null 2>&1
     print_success "Contributed to powers of tau ceremony"
 else
     print_success "pot12_0001.ptau already exists"
 fi
 
 if [ ! -f "pot12_final.ptau" ]; then
-    snarkjs powersoftau prepare phase2 pot12_0001.ptau pot12_final.ptau -v
+    snarkjs powersoftau prepare phase2 pot12_0001.ptau pot12_final.ptau -v > /dev/null 2>&1
     print_success "Phase 2 preparation completed"
 else
     print_success "pot12_final.ptau already exists"
@@ -112,26 +112,26 @@ fi
 print_step "4. Phase 2 Setup"
 
 if [ ! -f "${CIRCUIT_NAME}_0000.zkey" ]; then
-    snarkjs groth16 setup "../${CIRCUIT_NAME}.r1cs" pot12_final.ptau "${CIRCUIT_NAME}_0000.zkey"
+    snarkjs groth16 setup "../${CIRCUIT_NAME}.r1cs" pot12_final.ptau "${CIRCUIT_NAME}_0000.zkey" > /dev/null 2>&1
     print_success "Initial zkey generated"
 else
     print_success "${CIRCUIT_NAME}_0000.zkey already exists"
 fi
 
 if [ ! -f "${CIRCUIT_NAME}_0001.zkey" ]; then
-    snarkjs zkey contribute "${CIRCUIT_NAME}_0000.zkey" "${CIRCUIT_NAME}_0001.zkey" --name="1st Contributor Name" -v -e="$ENTROPY"
+    snarkjs zkey contribute "${CIRCUIT_NAME}_0000.zkey" "${CIRCUIT_NAME}_0001.zkey" --name="1st Contributor Name" -v -e="$ENTROPY" > /dev/null 2>&1
     print_success "Contributed to phase 2"
 else
     print_success "${CIRCUIT_NAME}_0001.zkey already exists"
 fi
 
 # ALWAYS refresh verification key from latest zkey to avoid mismatch
-snarkjs zkey export verificationkey "${CIRCUIT_NAME}_0001.zkey" ../verification_key.json
+snarkjs zkey export verificationkey "${CIRCUIT_NAME}_0001.zkey" ../verification_key.json > /dev/null 2>&1
 print_success "Verification key exported to main directory (refreshed)"
 
 # Step 5: Generate Proof
 print_step "5. Generating Proof"
-snarkjs groth16 prove "${CIRCUIT_NAME}_0001.zkey" witness.wtns ../proof.json ../public.json
+snarkjs groth16 prove "${CIRCUIT_NAME}_0001.zkey" witness.wtns ../proof.json ../public.json > /dev/null 2>&1
 print_success "Proof generated in main directory"
 
 # Step 6: Verify Proof
@@ -148,14 +148,14 @@ fi
 
 # Step 7: Generate Solidity Verifier
 print_step "7. Generating Solidity Verifier"
-snarkjs zkey export solidityverifier "${CIRCUIT_NAME}_0001.zkey" ../contracts/Groth16Verifier.sol
+snarkjs zkey export solidityverifier "${CIRCUIT_NAME}_0001.zkey" ../contracts/Groth16Verifier.sol > /dev/null 2>&1
 print_success "Solidity verifier generated: ../contracts/Groth16Verifier.sol"
 
 # Step 8: Generate call parameters
 print_step "8. Generating Call Parameters for Smart Contract"
 # Try both modern and legacy command syntaxes, save to a file in the project root
-snarkjs generatecall ../public.json ../proof.json > ../call_params.txt || \
-snarkjs groth16 export soliditycalldata ../public.json ../proof.json > ../call_params.txt
+snarkjs generatecall ../public.json ../proof.json > ../call_params.txt 2>/dev/null || \
+snarkjs groth16 export soliditycalldata ../public.json ../proof.json > ../call_params.txt 2>/dev/null
 
 cd ..
 

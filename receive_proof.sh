@@ -297,11 +297,11 @@ main_monitor() {
     echo ""
     
     # Test direct verification with local files
-    test_direct_verification
+    # test_direct_verification
     echo ""
     
     # Get recent events
-    get_recent_events
+    # get_recent_events
     echo ""
     
     print_step "Monitoring Complete"
@@ -311,26 +311,26 @@ main_monitor() {
 # Run the monitoring
 main_monitor
 
-# Ask if user wants continuous monitoring
-echo ""
-prompt_input "Do you want to enable continuous monitoring? (y/n)" "CONTINUOUS" "n"
+# # Ask if user wants continuous monitoring
+# echo ""
+# prompt_input "Do you want to enable continuous monitoring? (y/n)" "CONTINUOUS" "n"
 
-if [ "$CONTINUOUS" = "y" ] || [ "$CONTINUOUS" = "Y" ]; then
-    print_step "Starting Continuous Monitoring"
-    echo "Press Ctrl+C to stop..."
-    echo ""
+# if [ "$CONTINUOUS" = "y" ] || [ "$CONTINUOUS" = "Y" ]; then
+#     print_step "Starting Continuous Monitoring"
+#     echo "Press Ctrl+C to stop..."
+#     echo ""
     
-    while true; do
-        sleep 10
-        echo "$(date): Checking for new events..."
-        get_recent_events
-        echo "---"
-    done
-else
-    print_success "Monitoring completed! 🎉"
-    echo ""
-    echo "Tips:"
-    echo "- Run this script again to check for updates"
-    echo "- Use continuous monitoring mode for real-time updates"
-    echo "- Check the contract events in a block explorer for more details"
-fi 
+#     while true; do
+#         sleep 10
+#         echo "$(date): Checking for new events..."
+#         get_recent_events
+#         echo "---"
+#     done
+# else
+#     print_success "Monitoring completed! 🎉"
+#     echo ""
+#     echo "Tips:"
+#     echo "- Run this script again to check for updates"
+#     echo "- Use continuous monitoring mode for real-time updates"
+#     echo "- Check the contract events in a block explorer for more details"
+# fi 
