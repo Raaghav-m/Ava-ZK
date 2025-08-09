@@ -27,6 +27,7 @@ contract ZKProofReceiver is ITeleporterReceiver {
     }
 
     ProofData latestProof; // Removed 'public' to avoid getter issue
+    bool public isProofValid;
 
     // Events       
     event ProofReceived(
@@ -97,6 +98,7 @@ contract ZKProofReceiver is ITeleporterReceiver {
     isProofValid = verifier.verifyProof(_pA, _pB, _pC, _pubSignals);
     require(isProofValid, "NOT VERIFIED");
 
+    if (isProofValid) {
     if (isProofValid) {
         emit ProofVerificationSuccess(_pubSignals[0]);
     }

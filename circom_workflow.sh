@@ -51,8 +51,7 @@ print_step "Starting Circom Workflow for $CIRCUIT_FILE"
 
 # Step 1: Compile the circuit
 print_step "1. Compiling Circuit"
-echo "Running: circom $CIRCUIT_FILE --r1cs --wasm --sym"
-circom "$CIRCUIT_FILE" --r1cs --wasm --sym
+circom "$CIRCUIT_FILE" --r1cs --wasm --sym > /dev/null 2>&1
 print_success "Circuit compiled successfully"
 
 # Step 2: Generate witness
@@ -79,32 +78,28 @@ if [ -f "../input.json" ]; then
     INPUT_FILE="../input.json"
 fi
 
-echo "Running: node generate_witness.js ${CIRCUIT_NAME}.wasm $INPUT_FILE witness.wtns"
-node generate_witness.js "${CIRCUIT_NAME}.wasm" "$INPUT_FILE" witness.wtns
+node generate_witness.js "${CIRCUIT_NAME}.wasm" "$INPUT_FILE" witness.wtns > /dev/null 2>&1
 print_success "Witness computed successfully"
 
 # Step 3: Powers of Tau (if not already done)
 print_step "3. Setting up Powers of Tau"
 
 if [ ! -f "pot12_0000.ptau" ]; then
-    echo "Running: snarkjs powersoftau new bn128 12 pot12_0000.ptau -v"
-    snarkjs powersoftau new bn128 12 pot12_0000.ptau -v
+    snarkjs powersoftau new bn128 12 pot12_0000.ptau -v > /dev/null 2>&1
     print_success "Powers of tau ceremony started"
 else
     print_success "pot12_0000.ptau already exists"
 fi
 
 if [ ! -f "pot12_0001.ptau" ]; then
-    echo "Running: snarkjs powersoftau contribute pot12_0000.ptau pot12_0001.ptau --name=\"First contribution\" -v"
-    snarkjs powersoftau contribute pot12_0000.ptau pot12_0001.ptau --name="First contribution" -v
+    snarkjs powersoftau contribute pot12_0000.ptau pot12_0001.ptau --name="First contribution" -v > /dev/null 2>&1
     print_success "Contributed to powers of tau ceremony"
 else
     print_success "pot12_0001.ptau already exists"
 fi
 
 if [ ! -f "pot12_final.ptau" ]; then
-    echo "Running: snarkjs powersoftau prepare phase2 pot12_0001.ptau pot12_final.ptau -v"
-    snarkjs powersoftau prepare phase2 pot12_0001.ptau pot12_final.ptau -v
+    snarkjs powersoftau prepare phase2 pot12_0001.ptau pot12_final.ptau -v > /dev/null 2>&1
     print_success "Phase 2 preparation completed"
 else
     print_success "pot12_final.ptau already exists"
@@ -114,39 +109,34 @@ fi
 print_step "4. Phase 2 Setup"
 
 if [ ! -f "${CIRCUIT_NAME}_0000.zkey" ]; then
-    echo "Running: snarkjs groth16 setup ../${CIRCUIT_NAME}.r1cs pot12_final.ptau ${CIRCUIT_NAME}_0000.zkey"
-    snarkjs groth16 setup "../${CIRCUIT_NAME}.r1cs" pot12_final.ptau "${CIRCUIT_NAME}_0000.zkey"
+    snarkjs groth16 setup "../${CIRCUIT_NAME}.r1cs" pot12_final.ptau "${CIRCUIT_NAME}_0000.zkey" > /dev/null 2>&1
     print_success "Initial zkey generated"
 else
     print_success "${CIRCUIT_NAME}_0000.zkey already exists"
 fi
 
 if [ ! -f "${CIRCUIT_NAME}_0001.zkey" ]; then
-    echo "Running: snarkjs zkey contribute ${CIRCUIT_NAME}_0000.zkey ${CIRCUIT_NAME}_0001.zkey --name=\"1st Contributor Name\" -v"
-    snarkjs zkey contribute "${CIRCUIT_NAME}_0000.zkey" "${CIRCUIT_NAME}_0001.zkey" --name="1st Contributor Name" -v
+    snarkjs zkey contribute "${CIRCUIT_NAME}_0000.zkey" "${CIRCUIT_NAME}_0001.zkey" --name="1st Contributor Name" -v > /dev/null 2>&1
     print_success "Contributed to phase 2"
 else
     print_success "${CIRCUIT_NAME}_0001.zkey already exists"
 fi
 
-if [ ! -f "verification_key.json" ]; then
-    echo "Running: snarkjs zkey export verificationkey ${CIRCUIT_NAME}_0001.zkey verification_key.json"
-    snarkjs zkey export verificationkey "${CIRCUIT_NAME}_0001.zkey" verification_key.json
-    print_success "Verification key exported"
+if [ ! -f "../verification_key.json" ]; then
+    snarkjs zkey export verificationkey "${CIRCUIT_NAME}_0001.zkey" ../verification_key.json > /dev/null 2>&1
+    print_success "Verification key exported to main directory"
 else
-    print_success "verification_key.json already exists"
+    print_success "verification_key.json already exists in main directory"
 fi
 
 # Step 5: Generate Proof
 print_step "5. Generating Proof"
-echo "Running: snarkjs groth16 prove ${CIRCUIT_NAME}_0001.zkey witness.wtns proof.json public.json"
-snarkjs groth16 prove "${CIRCUIT_NAME}_0001.zkey" witness.wtns proof.json public.json
-print_success "Proof generated successfully"
+snarkjs groth16 prove "${CIRCUIT_NAME}_0001.zkey" witness.wtns ../proof.json ../public.json > /dev/null 2>&1
+print_success "Proof generated in main directory"
 
 # Step 6: Verify Proof
 print_step "6. Verifying Proof"
-echo "Running: snarkjs groth16 verify verification_key.json public.json proof.json"
-VERIFICATION_RESULT=$(snarkjs groth16 verify verification_key.json public.json proof.json)
+VERIFICATION_RESULT=$(snarkjs groth16 verify ../verification_key.json ../public.json ../proof.json 2>/dev/null)
 
 if echo "$VERIFICATION_RESULT" | grep -q "OK"; then
     print_success "Proof verification: OK ✓"
@@ -158,30 +148,13 @@ fi
 
 # Step 7: Generate Solidity Verifier
 print_step "7. Generating Solidity Verifier"
-echo "Running: snarkjs zkey export solidityverifier ${CIRCUIT_NAME}_0001.zkey ../verifier.sol"
-snarkjs zkey export solidityverifier "${CIRCUIT_NAME}_0001.zkey" ../verifier.sol
-print_success "Solidity verifier generated: ../verifier.sol"
+snarkjs zkey export solidityverifier "${CIRCUIT_NAME}_0001.zkey" ../contracts/Groth16Verifier.sol > /dev/null 2>&1
+print_success "Solidity verifier generated: ../contracts/Groth16Verifier.sol"
 
 # Step 8: Generate call parameters
 print_step "8. Generating Call Parameters for Smart Contract"
-echo "Running: snarkjs generatecall"
-echo "Call parameters for verifyProof function:"
-echo "----------------------------------------"
-snarkjs generatecall
+snarkjs generatecall > /dev/null 2>&1
 
 cd ..
 
-print_step "Workflow Complete!"
-echo -e "${GREEN}All steps completed successfully!${NC}"
-echo ""
-echo "Generated files:"
-echo "  - input.json: Circuit inputs (main directory)"
-echo "  - verifier.sol: Solidity contract for on-chain verification (main directory)"
-echo "  - ${JS_DIR}/proof.json: The zk-proof"
-echo "  - ${JS_DIR}/public.json: Public inputs and outputs"
-echo "  - ${JS_DIR}/verification_key.json: Verification key"
-echo ""
-echo "To deploy the verifier contract:"
-echo "1. Copy the content of verifier.sol (in main directory)"
-echo "2. Deploy it on your preferred network (testnet recommended)"
-echo "3. Use the call parameters shown above with the verifyProof function"
+echo -e "${GREEN}✅ ZK Proof Setup Complete!${NC}"
