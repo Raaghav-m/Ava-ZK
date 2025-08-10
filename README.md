@@ -7,19 +7,19 @@ Scaffolding tool for creating ZK proof cross-chain projects.
 Create a new ZK proof project with one command:
 
 ```bash
-npm create ava-zk@latest
+npm create-ava-zk@latest
 ```
 
 Or using yarn:
 
 ```bash
-yarn create ava-zk
+yarn create-ava-zk
 ```
 
 Or using pnpm:
 
 ```bash
-pnpm create ava-zk
+pnpm create-ava-zk
 ```
 
 ## What it does
@@ -56,7 +56,7 @@ my-zk-project/
 
 ```bash
 # Create a new project
-npm create ava-zk@latest my-zk-app
+npm create-ava-zk@latest my-zk-app
 
 # Enter the project
 cd my-zk-app
