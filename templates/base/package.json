@@ -1,0 +1,62 @@
+{
+  "name": "ava-zk",
+  "version": "1.0.1",
+  "description": "Cross-chain ZK proof system using Circom, snarkjs, and Solidity smart contracts with Teleporter bridge integration for Avalanche subnets",
+  "main": "index.js",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "scripts": {
+    "compile": "bash ./circom_workflow.sh multiplier2.circom",
+    "deploy": "bash ./deploy.sh",
+    "send": "bash ./send_proof.sh",
+    "verify": "bash ./receive_proof.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Raaghav-m/zk-proof.git"
+  },
+  "keywords": [
+    "zk-snark",
+    "zero-knowledge",
+    "circom",
+    "snarkjs",
+    "groth16",
+    "cross-chain",
+    "avalanche",
+    "teleporter",
+    "blockchain",
+    "smart-contracts",
+    "solidity",
+    "foundry",
+    "proof-generation",
+    "verification"
+  ],
+  "author": "capGobin <dharshan2457@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "snarkjs": "^0.7.4",
+    "circomlib": "^2.0.5"
+  },
+  "files": [
+    "contracts/",
+    "*.circom",
+    "*.sh",
+    "*.py",
+    "input.json",
+    "README.md"
+  ],
+  "bin": {
+    "zk-compile": "./circom_workflow.sh",
+    "zk-deploy": "./deploy.sh",
+    "zk-send": "./send_proof.sh",
+    "zk-receive": "./receive_proof.sh"
+  },
+  "config": {
+    "circom": {
+      "curve": "bn128",
+      "ptau_size": 12
+    }
+  }
+}
