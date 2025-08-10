@@ -7,7 +7,7 @@ Scaffolding tool for creating ZK proof cross-chain projects.
 Create a new ZK proof project with one command:
 
 ```bash
-npm create-ava-zk@latest
+npx create-ava-zk@latest
 ```
 
 Or using yarn:
