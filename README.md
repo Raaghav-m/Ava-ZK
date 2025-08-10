@@ -74,9 +74,9 @@ Proves your account balance meets minimum requirements without revealing the exa
 ## Requirements
 
 - Node.js ≥ 16.0.0
-- [Circom](https://docs.circom.io/getting-started/installation/)
+- [Circom](https://docs.circom.io/getting-started/installation/) 
+- [Snarkjs] (https://github.com/iden3/snarkjs)
 - [Foundry](https://getfoundry.sh/) (forge, cast)
-- Python 3
 
 
 
