@@ -1,6 +1,6 @@
 {
   "name": "create-ava-zk",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Create ZK proof cross-chain projects with one command",
   "bin": {
     "create-ava-zk": "./bin/create-ava-zk.js"
@@ -31,6 +31,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Raaghav-m/create-ava-zk.git"
+    "url": "https://github.com/Raaghav-m/ava-zk.git"
   }
 } 
