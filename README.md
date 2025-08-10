@@ -10,18 +10,6 @@ Create a new ZK proof project with one command:
 npx create-ava-zk@latest
 ```
 
-Or using yarn:
-
-```bash
-yarn create-ava-zk
-```
-
-Or using pnpm:
-
-```bash
-pnpm create-ava-zk
-```
-
 ## What it does
 
 The tool will prompt you to:
