@@ -1,6 +1,6 @@
 {
   "name": "create-ava-zk",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Create ZK proof cross-chain projects with one command",
   "bin": {
     "create-ava-zk": "./bin/create-ava-zk.js"
