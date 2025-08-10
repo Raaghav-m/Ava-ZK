@@ -1,6 +1,6 @@
 # create-ava-zk
 
-Scaffolding tool for creating ZK proof cross-chain projects.
+Scaffolding tool for creating ZK proof cross-chain projects.Docs in this [page](https://ava-zk.vercel.app/)
 
 ## Usage
 
@@ -77,6 +77,9 @@ Proves your account balance meets minimum requirements without revealing the exa
 - [Circom](https://docs.circom.io/getting-started/installation/)
 - [Foundry](https://getfoundry.sh/) (forge, cast)
 - Python 3
+
+
+
 
 ## License
 
